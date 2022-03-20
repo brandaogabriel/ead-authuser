@@ -5,9 +5,11 @@ import com.ead.authuser.enums.UserStatus;
 import com.ead.authuser.enums.UserType;
 import com.ead.authuser.models.UserModel;
 import com.ead.authuser.services.UserService;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -25,7 +27,10 @@ public class AuthenticationController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<Object> registerUser(@RequestBody UserDto request) {
+    public ResponseEntity<Object> registerUser(
+            @RequestBody
+            @Validated(UserDto.UserView.RegistrationPost.class)
+            @JsonView(UserDto.UserView.RegistrationPost.class) UserDto request) {
         if (userService.existsByUsername(request.getUsername())) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: Username is already taken!");
         }
