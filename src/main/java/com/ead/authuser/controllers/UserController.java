@@ -5,6 +5,7 @@ import com.ead.authuser.models.UserModel;
 import com.ead.authuser.services.UserService;
 import com.ead.authuser.specifications.SpecificationTemplate;
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -22,6 +23,7 @@ import java.util.UUID;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+@Log4j2
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/api/v1/users")
@@ -59,12 +61,18 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteUserById(@PathVariable(value = "id") UUID id) {
+        log.debug("DELETE deleteUserById userId {} received", id);
+
         Optional<UserModel> possibleUserModel = userService.findById(id);
         if (possibleUserModel.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
 
         userService.deleteUser(possibleUserModel.get());
+
+        log.debug("DELETE deleteUserById, userId {}", id);
+        log.info("User deleted successfully");
+
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
@@ -73,6 +81,7 @@ public class UserController {
                                                  @RequestBody
                                                  @Validated(UserDto.UserView.UserPut.class)
                                                  @JsonView(UserDto.UserView.UserPut.class) UserDto request) {
+        log.debug("PUT updateUserById userDto received {}", request.toString());
         Optional<UserModel> possibleUserModel = userService.findById(id);
         if (possibleUserModel.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
@@ -84,6 +93,9 @@ public class UserController {
         userModel.setCpf(request.getCpf());
         userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
         userService.save(userModel);
+
+        log.debug("PUT updateUserById userModel Saved {}", userModel.toString());
+        log.info("User updated successfully, userId: {}", userModel.getUserId());
 
         return ResponseEntity.status(HttpStatus.OK).body(userModel);
     }
@@ -98,6 +110,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
         if (!possibleUserModel.get().getPassword().equals(request.getOldPassword())) {
+            log.warn("PUT updateUserPasswordById Mismatched old password, userId {}", id);
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: Mismatched old password.");
         }
 
