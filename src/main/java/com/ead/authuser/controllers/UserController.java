@@ -39,6 +39,7 @@ public class UserController {
     public ResponseEntity<Page<UserModel>> getAllUsers(
             SpecificationTemplate.UserSpec spec,
             @PageableDefault(page = 0, size = 10, sort = "userId", direction = Sort.Direction.ASC) Pageable pageable) {
+        log.debug("GET getAllUsers users with pagination");
 
         Page<UserModel> userModelPage = userService.findAll(spec, pageable);
         if (userModelPage.hasContent()) {
@@ -52,8 +53,11 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getUserById(@PathVariable(value = "id") UUID id) {
+        log.debug("GET getUserById userId {}", id);
+
         Optional<UserModel> possibleUserModel = userService.findById(id);
         if (possibleUserModel.isEmpty()) {
+            log.warn("GET getUserById userId {} NOT FOUND", id);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
         return ResponseEntity.status(HttpStatus.OK).body(possibleUserModel.get());
@@ -105,8 +109,11 @@ public class UserController {
                                                          @RequestBody
                                                          @Validated(UserDto.UserView.PasswordPut.class)
                                                          @JsonView(UserDto.UserView.PasswordPut.class) UserDto request) {
+        log.info("PUT updateUserPasswordById userId {}", id);
+
         Optional<UserModel> possibleUserModel = userService.findById(id);
         if (possibleUserModel.isEmpty()) {
+            log.warn("PUT updateUserPasswordById userId {} NOT FOUND", id);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
         if (!possibleUserModel.get().getPassword().equals(request.getOldPassword())) {
@@ -118,6 +125,9 @@ public class UserController {
         userModel.setPassword(request.getPassword());
         userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
         userService.save(userModel);
+
+        log.info("User updated successfully, userId: {}", userModel.getUserId());
+
         return ResponseEntity.status(HttpStatus.OK).body("Password update successfully.");
     }
 
@@ -126,8 +136,11 @@ public class UserController {
                                                       @RequestBody
                                                       @Validated(UserDto.UserView.ImagePut.class)
                                                       @JsonView(UserDto.UserView.ImagePut.class) UserDto request) {
+        log.info("PUT updateUserImageById userId {}", id);
+
         Optional<UserModel> possibleUserModel = userService.findById(id);
         if (possibleUserModel.isEmpty()) {
+            log.warn("PUT updateUserPasswordById userId {} NOT FOUND", id);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
 
@@ -135,6 +148,10 @@ public class UserController {
         userModel.setImageUrl(request.getImageUrl());
         userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
         userService.save(userModel);
+
+        log.debug("PUT updateUserImageById userModel Saved {}", userModel.toString());
+        log.info("User updated successfully, userId: {}", userModel.getUserId());
+
         return ResponseEntity.status(HttpStatus.OK).body(userModel);
     }
 }
