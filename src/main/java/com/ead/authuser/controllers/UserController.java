@@ -98,7 +98,7 @@ public class UserController {
         userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
         userService.save(userModel);
 
-        log.debug("PUT updateUserById userModel Saved {}", userModel.toString());
+        log.debug("PUT updateUserById userId Saved {}", userModel.getUserId());
         log.info("User updated successfully, userId: {}", userModel.getUserId());
 
         return ResponseEntity.status(HttpStatus.OK).body(userModel);
@@ -149,7 +149,7 @@ public class UserController {
         userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
         userService.save(userModel);
 
-        log.debug("PUT updateUserImageById userModel Saved {}", userModel.toString());
+        log.debug("PUT updateUserImageById userId Saved {}", userModel.getUserId());
         log.info("User updated successfully, userId: {}", userModel.getUserId());
 
         return ResponseEntity.status(HttpStatus.OK).body(userModel);
