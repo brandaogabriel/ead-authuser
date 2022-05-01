@@ -22,6 +22,8 @@ spring:
   output:
     ansi:
       enabled: always
+  rabbitmq:
+    addresses: ${RABBITMQ_URL:xxxxx}
 
 logging:
   level:
