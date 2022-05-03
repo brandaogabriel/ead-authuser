@@ -17,9 +17,11 @@ public class RabbitmqConfig {
     @Autowired
     private CachingConnectionFactory cachingConnectionFactory;
 
+    //Exchange name
     @Value("${ead.broker.exchange.userEvent}")
     private String exchangeUserEvent;
 
+    //Creates instance of rabbitTemplate to be used in the application
     @Bean
     public RabbitTemplate rabbitTemplate() {
         RabbitTemplate template = new RabbitTemplate(cachingConnectionFactory);
@@ -27,6 +29,7 @@ public class RabbitmqConfig {
         return template;
     }
 
+    //Implementation of converter to deserialize messages using JavaTimeModule library
     @Bean
     public Jackson2JsonMessageConverter messageConverter() {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -34,6 +37,7 @@ public class RabbitmqConfig {
         return new Jackson2JsonMessageConverter(objectMapper);
     }
 
+    //Creates an exchange type FANOUT to be used in the rabbitmq broker
     @Bean
     public FanoutExchange fanoutUserEvent() {
         return new FanoutExchange(exchangeUserEvent);

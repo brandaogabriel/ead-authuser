@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserEventPublisher {
 
+    //Exchange name
     @Value("${ead.broker.exchange.userEvent}")
     private String exchangeUserEvent;
 
