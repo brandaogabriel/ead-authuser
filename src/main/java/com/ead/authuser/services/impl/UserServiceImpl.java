@@ -40,6 +40,8 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void deleteUser(UserModel userModel) {
+        UserEventDto event = UserEventDto.toModel(userModel);
+        userEventPublisher.publishUserEvent(event, ActionType.DELETE);
         userRepository.delete(userModel);
     }
 
@@ -62,11 +64,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserModel saveUserAndPublishEvent(UserModel userModel) {
         userModel = save(userModel);
-        UserEventDto event = new UserEventDto();
-        BeanUtils.copyProperties(userModel, event);
-        event.setUserType(userModel.getUserType().toString());
-        event.setUserStatus(userModel.getUserStatus().toString());
+        UserEventDto event = UserEventDto.toModel(userModel);
         userEventPublisher.publishUserEvent(event, ActionType.CREATE);
         return userModel;
+    }
+
+    @Override
+    public UserModel updateUser(UserModel userModel) {
+        userModel = save(userModel);
+        UserEventDto event = UserEventDto.toModel(userModel);
+        userEventPublisher.publishUserEvent(event, ActionType.UPDATE);
+        return userModel;
+    }
+
+    @Override
+    public UserModel updatePassword(UserModel userModel) {
+        return save(userModel);
     }
 }

@@ -101,7 +101,7 @@ public class UserController {
         userModel.setPhoneNumber(request.getPhoneNumber());
         userModel.setCpf(request.getCpf());
         userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
-        userService.save(userModel);
+        userService.updateUser(userModel);
 
         log.debug("PUT updateUserById userId Saved {}", userModel.getUserId());
         log.info("User updated successfully, userId: {}", userModel.getUserId());
@@ -129,7 +129,7 @@ public class UserController {
         var userModel = possibleUserModel.get();
         userModel.setPassword(request.getPassword());
         userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
-        userService.save(userModel);
+        userService.updatePassword(userModel);
 
         log.info("User updated successfully, userId: {}", userModel.getUserId());
 
@@ -152,7 +152,7 @@ public class UserController {
         var userModel = possibleUserModel.get();
         userModel.setImageUrl(request.getImageUrl());
         userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
-        userService.save(userModel);
+        userService.updateUser(userModel);
 
         log.debug("PUT updateUserImageById userId Saved {}", userModel.getUserId());
         log.info("User updated successfully, userId: {}", userModel.getUserId());
