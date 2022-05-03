@@ -1,8 +1,12 @@
 package com.ead.authuser.services.impl;
 
+import com.ead.authuser.dtos.UserEventDto;
+import com.ead.authuser.enums.ActionType;
 import com.ead.authuser.models.UserModel;
+import com.ead.authuser.publishers.UserEventPublisher;
 import com.ead.authuser.repositories.UserRepository;
 import com.ead.authuser.services.UserService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -16,9 +20,11 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final UserEventPublisher userEventPublisher;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, UserEventPublisher userEventPublisher) {
         this.userRepository = userRepository;
+        this.userEventPublisher = userEventPublisher;
     }
 
     @Override
@@ -38,8 +44,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void save(UserModel userModel) {
-        userRepository.save(userModel);
+    public UserModel save(UserModel userModel) {
+        return userRepository.save(userModel);
     }
 
     @Override
@@ -50,5 +56,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+    @Transactional
+    @Override
+    public UserModel saveUserAndPublishEvent(UserModel userModel) {
+        userModel = save(userModel);
+        UserEventDto event = new UserEventDto();
+        BeanUtils.copyProperties(userModel, event);
+        event.setUserType(userModel.getUserType().toString());
+        event.setUserStatus(userModel.getUserStatus().toString());
+        userEventPublisher.publishUserEvent(event, ActionType.CREATE);
+        return userModel;
     }
 }
