@@ -23,7 +23,7 @@ spring:
     ansi:
       enabled: always
   rabbitmq:
-    addresses: ${RABBITMQ_HOST:xxx}
+    addresses: ${RABBITMQ_HOST:xxxx}
 
 logging:
   level:

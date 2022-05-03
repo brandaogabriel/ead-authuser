@@ -97,7 +97,7 @@ public class UserController {
         }
 
         var userModel = possibleUserModel.get();
-        userModel.setFullname(request.getFullname());
+        userModel.setFullName(request.getFullName());
         userModel.setPhoneNumber(request.getPhoneNumber());
         userModel.setCpf(request.getCpf());
         userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
