@@ -37,7 +37,7 @@ public class CourseClient {
     }
 
 //    @Retry(name = "retryInstance", fallbackMethod = "retryfallback")
-    @CircuitBreaker(name = "circuitbreakerInstance", fallbackMethod = "circuitrbreakerfallback")
+    @CircuitBreaker(name = "circuitbreakerInstance")
     public Page<CourseDto> getAllCoursesByUser(UUID userId, Pageable pageable) {
         List<CourseDto> fetchResult = null;
         ResponseEntity<ResponsePageDto<CourseDto>> result = null;
