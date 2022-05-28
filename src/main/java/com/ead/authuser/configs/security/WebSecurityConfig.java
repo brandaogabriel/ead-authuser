@@ -71,6 +71,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new AuthenticationJwtFilter();
     }
 
+    /**
+     * Definição de hierarquias de roles da aplicação
+     * ROLE_STUDENT pode acessar suas rotas definidas e também as rotas da ROLE_USER
+     * ROLE_INSTRUCTOR pode acessar suas rotas definidas e também as rotas da ROLE_STUDENT
+     * ROLE_ADMIN pode acessar suas rotas definidas e também as rotas da ROLE_INSTRUCTOR
+     * @return a classe de hierarquia
+     */
     @Bean
     public RoleHierarchy roleHierarchy() {
         RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
