@@ -27,4 +27,6 @@ public interface UserService {
     UserModel updateUser(UserModel userModel);
 
     UserModel updatePassword(UserModel userModel);
+
+    Optional<UserModel> findByUserId(UUID id);
 }

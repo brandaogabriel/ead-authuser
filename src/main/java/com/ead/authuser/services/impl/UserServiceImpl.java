@@ -81,4 +81,9 @@ public class UserServiceImpl implements UserService {
     public UserModel updatePassword(UserModel userModel) {
         return save(userModel);
     }
+
+    @Override
+    public Optional<UserModel> findByUserId(UUID userId) {
+        return userRepository.findByUserId(userId);
+    }
 }
